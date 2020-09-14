@@ -449,6 +449,26 @@ class Salesforce:
             'done': True,
         }
 
+    def invoke_action(self, action, data, method='POST', **kwargs):
+        """Makes an HTTP request to an action endpoint."""
+        url = "{b}actions/standard/{a}".format(
+            b=self.base_url,
+            a=action,
+        )
+        result = self._call_salesforce(
+            method,
+            url,
+            data=json.dumps(data),
+            **kwargs
+        )
+
+        try:
+            response_content = result.json()
+        # pylint: disable=broad-except
+        except Exception:
+            response_content = result.text
+
+        return response_content
 
     def apexecute(self, action, method='GET', data=None, **kwargs):
         """Makes an HTTP request to an APEX REST endpoint
